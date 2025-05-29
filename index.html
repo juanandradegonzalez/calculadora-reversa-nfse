@@ -394,6 +394,67 @@
             display: block;
         }
 
+        .switch-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray-300);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .switch-label {
+            font-size: 0.875rem;
+            color: var(--gray-700);
+        }
+
         @media (max-width: 768px) {
             .checkbox-group {
                 grid-template-columns: 1fr;
@@ -443,6 +504,13 @@
                     <div class="form-group">
                         <label for="aliquotaISSQN">Alíquota ISSQN (%)</label>
                         <input type="number" id="aliquotaISSQN" class="form-control" value="5" step="0.01" min="0" max="100">
+                        <div class="switch-container">
+                            <label class="switch">
+                                <input type="checkbox" id="issRetido" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span class="switch-label">ISS Retido</span>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -808,6 +876,7 @@
             }
 
             const aliquotaISSQN = parseFloat(document.getElementById('aliquotaISSQN').value) / 100;
+            const issRetido = document.getElementById('issRetido').checked;
             const aliquotaINSS = parseFloat(document.getElementById('aliquotaINSS').value) / 100;
             const temINSS = document.getElementById('temINSS').checked;
             const temIR = document.getElementById('temIR').checked;
@@ -843,7 +912,10 @@
             const tolerancia = 0.001;
 
             while (iteracoes < maxIteracoes) {
+                // Calcula o valor do ISS
                 const issqn = valorBruto * aliquotaISSQN;
+                
+                // Outros impostos
                 const inss = temINSS ? valorBruto * aliquotaINSS : 0;
                 const ir = temIR ? Math.max(0, calcularIR(valorBruto)) : 0;
                 const csll = temCSLL ? valorBruto * aliquotaCSLL : 0;
@@ -870,7 +942,17 @@
                     }
                 }
                 
-                const valorLiquidoCalculado = valorBruto - issqn - inss - ir - csll - pis - cofins - descontoIncondicionalCalc - outroDescontoCalc;
+                // Calcula o valor líquido considerando se o ISS é retido ou não
+                const valorLiquidoCalculado = valorBruto - 
+                                             (issRetido ? issqn : 0) - 
+                                             inss - 
+                                             ir - 
+                                             csll - 
+                                             pis - 
+                                             cofins - 
+                                             descontoIncondicionalCalc - 
+                                             outroDescontoCalc;
+                
                 const diferenca = valorLiquido - valorLiquidoCalculado;
 
                 if (Math.abs(diferenca) < tolerancia) {
@@ -917,7 +999,15 @@
                 }
             }
             
-            const totalImpostos = issqnFinal + inssFinal + irFinal + csllFinal + pisFinal + cofinsFinal + descontoIncondicionalFinal + outroDescontoFinal;
+            // Total de impostos (incluindo apenas os que afetam o valor líquido)
+            const totalImpostos = (issRetido ? issqnFinal : 0) + 
+                                inssFinal + 
+                                irFinal + 
+                                csllFinal + 
+                                pisFinal + 
+                                cofinsFinal + 
+                                descontoIncondicionalFinal + 
+                                outroDescontoFinal;
 
             // Gerar resultados dinamicamente
             const resultGrid = document.getElementById('resultGrid');
@@ -936,7 +1026,7 @@
                 <div class="result-card">
                     <h4>ISSQN</h4>
                     <div class="value">${formatarMoeda(issqnFinal)}</div>
-                    <div class="percentage">${(aliquotaISSQN * 100).toFixed(1)}% do valor bruto</div>
+                    <div class="percentage">${(aliquotaISSQN * 100).toFixed(1)}% do valor bruto ${issRetido ? '(retido)' : '(não retido)'}</div>
                 </div>
             `;
 
