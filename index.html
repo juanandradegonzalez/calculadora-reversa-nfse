@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora NFSe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-light: #93c5fd;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #0ea5e9;
+            --radius: 8px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--gray-100);
+            color: var(--gray-800);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--gray-600);
+            font-size: 1rem;
+        }
+
+        .calculator {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            .calculator {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: var(--gray-50);
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-header h2 svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: var(--primary);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--gray-900);
+            background-color: white;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-light);
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-item label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .radio-item input[type="radio"] {
+            width: 1rem;
+            height: 1rem;
+            accent-color: var(--primary);
+        }
+
+        .radio-item label {
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.75rem;
+        }
+
+        .input-group .form-control {
+            flex: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: var(--radius);
+            transition: all 0.15s ease-in-out;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            color: white;
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .collapsible {
+            margin-top: 1rem;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            padding: 1rem;
+            background-color: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .collapsible-body {
+            padding: 1rem;
+            display: none;
+        }
+
+        .collapsible.active .collapsible-body {
+            display: block;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .table th {
+            text-align: left;
+            font-weight: 500;
+            color: var(--gray-700);
+            background-color: var(--gray-50);
+        }
+
+        .table td input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+        }
+
+        .info-box {
+            background-color: var(--gray-50);
+            border-left: 4px solid var(--info);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0 var(--radius) var(--radius) 0;
+        }
+
+        .info-box strong {
+            color: var(--gray-800);
+        }
+
+        .results {
+            margin-top: 2rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .result-card {
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .result-card h4 {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .result-card .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .result-card .percentage {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        .dynamic-field {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            background-color: var(--gray-50);
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-200);
+        }
+
+        .dynamic-field.show {
+            display: block;
+        }
+
+        .dynamic-field h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 1rem;
+        }
+
+        .tab-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-header {
+            display: flex;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.25rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+
+            .radio-group {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .input-group .form-control {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>Calculadora Reversa NFSe</h1>
+            <p>Calcule impostos e descontos a partir do valor líquido</p>
+        </div>
+
+        <div class="calculator">
+            <div class="card">
+                <div class="card-header">
+                    <h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                        Configurações
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="valorLiquido">Valor Líquido Final (R$)</label>
+                        <input type="number" id="valorLiquido" class="form-control" step="0.01" placeholder="0,00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aliquotaISSQN">Alíquota ISSQN (%)</label>
+                        <input type="number" id="aliquotaISSQN" class="form-control" value="5" step="0.01" min="0" max="100">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Impostos e Descontos Aplicáveis</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="temINSS">
+                                <label for="temINSS">INSS</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="temIR">
+                                <label for="temIR">IR</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="temCSLL">
+                                <label for="temCSLL">CSLL</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="temPIS">
+                                <label for="temPIS">PIS</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="temCOFINS">
+                                <label for="temCOFINS">COFINS</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="temDescontoIncondicional">
+                                <label for="temDescontoIncondicional">Desc. Incondicional</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="temDescontoCondicional">
+                                <label for="temDescontoCondicional">Desc. Condicional</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="temOutroDesconto">
+                                <label for="temOutroDesconto">Outro Desconto</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campos dinâmicos -->
+                    <div id="fieldINSS" class="dynamic-field">
+                        <h3>Configuração INSS</h3>
+                        <div class="form-group">
+                            <label for="aliquotaINSS">Alíquota INSS (%)</label>
+                            <input type="number" id="aliquotaINSS" class="form-control" value="11" step="0.01" min="0" max="100">
+                        </div>
+                    </div>
+
+                    <div id="fieldCSLL" class="dynamic-field">
+                        <h3>Configuração CSLL</h3>
+                        <div class="form-group">
+                            <label for="aliquotaCSLL">Alíquota CSLL (%)</label>
+                            <input type="number" id="aliquotaCSLL" class="form-control" value="1" step="0.01" min="0" max="100">
+                        </div>
+                    </div>
+
+                    <div id="fieldPIS" class="dynamic-field">
+                        <h3>Configuração PIS</h3>
+                        <div class="form-group">
+                            <label for="aliquotaPIS">Alíquota PIS (%)</label>
+                            <input type="number" id="aliquotaPIS" class="form-control" value="0.65" step="0.01" min="0" max="100">
+                        </div>
+                    </div>
+
+                    <div id="fieldCOFINS" class="dynamic-field">
+                        <h3>Configuração COFINS</h3>
+                        <div class="form-group">
+                            <label for="aliquotaCOFINS">Alíquota COFINS (%)</label>
+                            <input type="number" id="aliquotaCOFINS" class="form-control" value="3" step="0.01" min="0" max="100">
+                        </div>
+                    </div>
+
+                    <div id="descontoIncondicionalConfig" class="dynamic-field">
+                        <h3>Desconto Incondicional</h3>
+                        <div class="form-group">
+                            <label>Tipo de Desconto</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="incondicionalTipoAliquota" name="incondicionalTipo" value="aliquota" checked>
+                                    <label for="incondicionalTipoAliquota">Por Alíquota</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="incondicionalTipoValor" name="incondicionalTipo" value="valor">
+                                    <label for="incondicionalTipoValor">Por Valor</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="incondicionalAliquota">Alíquota (%)</label>
+                            <input type="number" id="incondicionalAliquota" class="form-control" step="0.01" min="0" max="100" placeholder="0,00">
+                        </div>
+                        <div class="form-group">
+                            <label for="incondicionalValor">Valor (R$)</label>
+                            <input type="number" id="incondicionalValor" class="form-control" step="0.01" min="0" placeholder="0,00">
+                        </div>
+                        <div class="info-box">
+                            <strong>Incondicional:</strong> Desconto aplicado diretamente na nota, reduz a base de cálculo dos impostos.
+                        </div>
+                    </div>
+
+                    <div id="descontoCondicionalConfig" class="dynamic-field">
+                        <h3>Desconto Condicional</h3>
+                        <div class="form-group">
+                            <label>Tipo de Desconto</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="condicionalTipoAliquota" name="condicionalTipo" value="aliquota" checked>
+                                    <label for="condicionalTipoAliquota">Por Alíquota</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="condicionalTipoValor" name="condicionalTipo" value="valor">
+                                    <label for="condicionalTipoValor">Por Valor</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="condicionalAliquota">Alíquota (%)</label>
+                            <input type="number" id="condicionalAliquota" class="form-control" step="0.01" min="0" max="100" placeholder="0,00">
+                        </div>
+                        <div class="form-group">
+                            <label for="condicionalValor">Valor (R$)</label>
+                            <input type="number" id="condicionalValor" class="form-control" step="0.01" min="0" placeholder="0,00">
+                        </div>
+                        <div class="info-box">
+                            <strong>Condicional:</strong> Desconto sujeito a condição (ex: pagamento antecipado). NÃO reduz a base de cálculo dos impostos.
+                        </div>
+                    </div>
+
+                    <div id="outroDescontoConfig" class="dynamic-field">
+                        <h3>Outro Desconto</h3>
+                        <div class="form-group">
+                            <label>Tipo de Desconto</label>
+                            <div class="radio-group">
+                                <div class="radio-item">
+                                    <input type="radio" id="outroTipoAliquota" name="outroTipo" value="aliquota" checked>
+                                    <label for="outroTipoAliquota">Por Alíquota</label>
+                                </div>
+                                <div class="radio-item">
+                                    <input type="radio" id="outroTipoValor" name="outroTipo" value="valor">
+                                    <label for="outroTipoValor">Por Valor</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="outroAliquota">Alíquota (%)</label>
+                            <input type="number" id="outroAliquota" class="form-control" step="0.01" min="0" max="100" placeholder="0,00">
+                        </div>
+                        <div class="form-group">
+                            <label for="outroValor">Valor (R$)</label>
+                            <input type="number" id="outroValor" class="form-control" step="0.01" min="0" placeholder="0,00">
+                        </div>
+                    </div>
+
+                    <div id="irTable" class="dynamic-field">
+                        <h3>Tabela do Imposto de Renda</h3>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Faixa de Valor Bruto</th>
+                                        <th>Alíquota (%)</th>
+                                        <th>Dedução (R$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Até R$ 2.259,20</td>
+                                        <td><input type="number" id="aliquota0" value="0" step="0.01" min="0" max="100" disabled></td>
+                                        <td><input type="number" id="deducao0" value="0" step="0.01" min="0" disabled></td>
+                                    </tr>
+                                    <tr>
+                                        <td>R$ 2.259,21 a R$ 2.826,65</td>
+                                        <td><input type="number" id="aliquota1" value="7.5" step="0.01" min="0" max="100"></td>
+                                        <td><input type="number" id="deducao1" value="169.44" step="0.01" min="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>R$ 2.826,66 a R$ 3.751,05</td>
+                                        <td><input type="number" id="aliquota2" value="15" step="0.01" min="0" max="100"></td>
+                                        <td><input type="number" id="deducao2" value="381.44" step="0.01" min="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>R$ 3.751,06 a R$ 4.664,68</td>
+                                        <td><input type="number" id="aliquota3" value="22.5" step="0.01" min="0" max="100"></td>
+                                        <td><input type="number" id="deducao3" value="662.77" step="0.01" min="0"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Acima de R$ 4.664,68</td>
+                                        <td><input type="number" id="aliquota4" value="27.5" step="0.01" min="0" max="100"></td>
+                                        <td><input type="number" id="deducao4" value="896.00" step="0.01" min="0"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-block" onclick="calcular()">Calcular Impostos</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="20" x2="12" y2="10"></line>
+                            <line x1="18" y1="20" x2="18" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="16"></line>
+                        </svg>
+                        Resultados
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div id="results" style="display: none;">
+                        <div class="results-grid" id="resultGrid">
+                            <!-- Resultados serão inseridos dinamicamente -->
+                        </div>
+                    </div>
+                    <div id="noResults" style="text-align: center; padding: 3rem 0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto; display: block; color: var(--gray-400); margin-bottom: 1rem;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <p style="color: var(--gray-500);">Preencha os dados e clique em "Calcular Impostos" para ver os resultados</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        }
+
+        function calcularIR(valorBruto) {
+            const aliquota1 = parseFloat(document.getElementById('aliquota1').value) / 100 || 0.075;
+            const aliquota2 = parseFloat(document.getElementById('aliquota2').value) / 100 || 0.15;
+            const aliquota3 = parseFloat(document.getElementById('aliquota3').value) / 100 || 0.225;
+            const aliquota4 = parseFloat(document.getElementById('aliquota4').value) / 100 || 0.275;
+            
+            const deducao1 = parseFloat(document.getElementById('deducao1').value) || 169.44;
+            const deducao2 = parseFloat(document.getElementById('deducao2').value) || 381.44;
+            const deducao3 = parseFloat(document.getElementById('deducao3').value) || 662.77;
+            const deducao4 = parseFloat(document.getElementById('deducao4').value) || 896.00;
+
+            if (valorBruto <= 2259.20) {
+                return 0;
+            } else if (valorBruto <= 2826.65) {
+                return (valorBruto * aliquota1) - deducao1;
+            } else if (valorBruto <= 3751.05) {
+                return (valorBruto * aliquota2) - deducao2;
+            } else if (valorBruto <= 4664.68) {
+                return (valorBruto * aliquota3) - deducao3;
+            } else {
+                return (valorBruto * aliquota4) - deducao4;
+            }
+        }
+
+        function toggleField(fieldId, show) {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.classList.toggle('show', show);
+            }
+        }
+
+        function setupEventListeners() {
+            // INSS
+            document.getElementById('temINSS').addEventListener('change', function() {
+                toggleField('fieldINSS', this.checked);
+            });
+
+            // IR
+            document.getElementById('temIR').addEventListener('change', function() {
+                toggleField('irTable', this.checked);
+            });
+
+            // CSLL
+            document.getElementById('temCSLL').addEventListener('change', function() {
+                toggleField('fieldCSLL', this.checked);
+            });
+
+            // PIS
+            document.getElementById('temPIS').addEventListener('change', function() {
+                toggleField('fieldPIS', this.checked);
+            });
+
+            // COFINS
+            document.getElementById('temCOFINS').addEventListener('change', function() {
+                toggleField('fieldCOFINS', this.checked);
+            });
+
+            // Desconto Incondicional
+            document.getElementById('temDescontoIncondicional').addEventListener('change', function() {
+                toggleField('descontoIncondicionalConfig', this.checked);
+            });
+
+            // Desconto Condicional
+            document.getElementById('temDescontoCondicional').addEventListener('change', function() {
+                toggleField('descontoCondicionalConfig', this.checked);
+            });
+
+            // Outro Desconto
+            document.getElementById('temOutroDesconto').addEventListener('change', function() {
+                toggleField('outroDescontoConfig', this.checked);
+            });
+
+            // Tipo de desconto incondicional
+            document.getElementById('incondicionalTipoAliquota').addEventListener('change', function() {
+                document.getElementById('incondicionalAliquota').disabled = !this.checked;
+                document.getElementById('incondicionalValor').disabled = this.checked;
+            });
+
+            document.getElementById('incondicionalTipoValor').addEventListener('change', function() {
+                document.getElementById('incondicionalAliquota').disabled = this.checked;
+                document.getElementById('incondicionalValor').disabled = !this.checked;
+            });
+
+            // Tipo de desconto condicional
+            document.getElementById('condicionalTipoAliquota').addEventListener('change', function() {
+                document.getElementById('condicionalAliquota').disabled = !this.checked;
+                document.getElementById('condicionalValor').disabled = this.checked;
+            });
+
+            document.getElementById('condicionalTipoValor').addEventListener('change', function() {
+                document.getElementById('condicionalAliquota').disabled = this.checked;
+                document.getElementById('condicionalValor').disabled = !this.checked;
+            });
+
+            // Tipo de outro desconto
+            document.getElementById('outroTipoAliquota').addEventListener('change', function() {
+                document.getElementById('outroAliquota').disabled = !this.checked;
+                document.getElementById('outroValor').disabled = this.checked;
+            });
+
+            document.getElementById('outroTipoValor').addEventListener('change', function() {
+                document.getElementById('outroAliquota').disabled = this.checked;
+                document.getElementById('outroValor').disabled = !this.checked;
+            });
+
+            // Enter no campo de valor líquido
+            document.getElementById('valorLiquido').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    calcular();
+                }
+            });
+
+            // Inicializar estados dos campos
+            document.getElementById('incondicionalValor').disabled = true;
+            document.getElementById('condicionalValor').disabled = true;
+            document.getElementById('outroValor').disabled = true;
+        }
+
+        function calcular() {
+            const valorLiquido = parseFloat(document.getElementById('valorLiquido').value);
+            
+            if (!valorLiquido || valorLiquido <= 0) {
+                alert('Por favor, insira um valor líquido válido.');
+                return;
+            }
+
+            const aliquotaISSQN = parseFloat(document.getElementById('aliquotaISSQN').value) / 100;
+            const aliquotaINSS = parseFloat(document.getElementById('aliquotaINSS').value) / 100;
+            const temINSS = document.getElementById('temINSS').checked;
+            const temIR = document.getElementById('temIR').checked;
+            
+            // Impostos federais
+            const temCSLL = document.getElementById('temCSLL').checked;
+            const aliquotaCSLL = parseFloat(document.getElementById('aliquotaCSLL').value) / 100;
+            const temPIS = document.getElementById('temPIS').checked;
+            const aliquotaPIS = parseFloat(document.getElementById('aliquotaPIS').value) / 100;
+            const temCOFINS = document.getElementById('temCOFINS').checked;
+            const aliquotaCOFINS = parseFloat(document.getElementById('aliquotaCOFINS').value) / 100;
+            
+            // Descontos
+            const temDescontoIncondicional = document.getElementById('temDescontoIncondicional').checked;
+            const incondicionalTipo = document.querySelector('input[name="incondicionalTipo"]:checked')?.value || 'aliquota';
+            const incondicionalAliquota = parseFloat(document.getElementById('incondicionalAliquota').value) / 100 || 0;
+            const incondicionalValor = parseFloat(document.getElementById('incondicionalValor').value) || 0;
+
+            const temDescontoCondicional = document.getElementById('temDescontoCondicional').checked;
+            const condicionalTipo = document.querySelector('input[name="condicionalTipo"]:checked')?.value || 'aliquota';
+            const condicionalAliquota = parseFloat(document.getElementById('condicionalAliquota').value) / 100 || 0;
+            const condicionalValor = parseFloat(document.getElementById('condicionalValor').value) || 0;
+
+            const temOutroDesconto = document.getElementById('temOutroDesconto').checked;
+            const outroTipo = document.querySelector('input[name="outroTipo"]:checked')?.value || 'aliquota';
+            const outroAliquota = parseFloat(document.getElementById('outroAliquota').value) / 100 || 0;
+            const outroValor = parseFloat(document.getElementById('outroValor').value) || 0;
+
+            // Cálculo reverso usando aproximação iterativa
+            let valorBruto = valorLiquido;
+            let iteracoes = 0;
+            const maxIteracoes = 1000;
+            const tolerancia = 0.001;
+
+            while (iteracoes < maxIteracoes) {
+                const issqn = valorBruto * aliquotaISSQN;
+                const inss = temINSS ? valorBruto * aliquotaINSS : 0;
+                const ir = temIR ? Math.max(0, calcularIR(valorBruto)) : 0;
+                const csll = temCSLL ? valorBruto * aliquotaCSLL : 0;
+                const pis = temPIS ? valorBruto * aliquotaPIS : 0;
+                const cofins = temCOFINS ? valorBruto * aliquotaCOFINS : 0;
+                
+                // Apenas desconto incondicional afeta o cálculo
+                let descontoIncondicionalCalc = 0;
+                if (temDescontoIncondicional) {
+                    if (incondicionalTipo === 'aliquota') {
+                        descontoIncondicionalCalc = valorBruto * incondicionalAliquota;
+                    } else {
+                        descontoIncondicionalCalc = incondicionalValor;
+                    }
+                }
+
+                // Outro desconto (assumindo que é incondicional por padrão)
+                let outroDescontoCalc = 0;
+                if (temOutroDesconto) {
+                    if (outroTipo === 'aliquota') {
+                        outroDescontoCalc = valorBruto * outroAliquota;
+                    } else {
+                        outroDescontoCalc = outroValor;
+                    }
+                }
+                
+                const valorLiquidoCalculado = valorBruto - issqn - inss - ir - csll - pis - cofins - descontoIncondicionalCalc - outroDescontoCalc;
+                const diferenca = valorLiquido - valorLiquidoCalculado;
+
+                if (Math.abs(diferenca) < tolerancia) {
+                    break;
+                }
+
+                valorBruto += diferenca * 1.05;
+                iteracoes++;
+            }
+
+            // Cálculo final dos impostos e descontos
+            const issqnFinal = valorBruto * aliquotaISSQN;
+            const inssFinal = temINSS ? valorBruto * aliquotaINSS : 0;
+            const irFinal = temIR ? Math.max(0, calcularIR(valorBruto)) : 0;
+            const csllFinal = temCSLL ? valorBruto * aliquotaCSLL : 0;
+            const pisFinal = temPIS ? valorBruto * aliquotaPIS : 0;
+            const cofinsFinal = temCOFINS ? valorBruto * aliquotaCOFINS : 0;
+            
+            // Descontos finais
+            let descontoIncondicionalFinal = 0;
+            if (temDescontoIncondicional) {
+                if (incondicionalTipo === 'aliquota') {
+                    descontoIncondicionalFinal = valorBruto * incondicionalAliquota;
+                } else {
+                    descontoIncondicionalFinal = incondicionalValor;
+                }
+            }
+
+            let descontoCondicionalFinal = 0;
+            if (temDescontoCondicional) {
+                if (condicionalTipo === 'aliquota') {
+                    descontoCondicionalFinal = valorBruto * condicionalAliquota;
+                } else {
+                    descontoCondicionalFinal = condicionalValor;
+                }
+            }
+
+            let outroDescontoFinal = 0;
+            if (temOutroDesconto) {
+                if (outroTipo === 'aliquota') {
+                    outroDescontoFinal = valorBruto * outroAliquota;
+                } else {
+                    outroDescontoFinal = outroValor;
+                }
+            }
+            
+            const totalImpostos = issqnFinal + inssFinal + irFinal + csllFinal + pisFinal + cofinsFinal + descontoIncondicionalFinal + outroDescontoFinal;
+
+            // Gerar resultados dinamicamente
+            const resultGrid = document.getElementById('resultGrid');
+            resultGrid.innerHTML = '';
+
+            // Valor Bruto
+            resultGrid.innerHTML += `
+                <div class="result-card">
+                    <h4>Valor Bruto</h4>
+                    <div class="value">${formatarMoeda(valorBruto)}</div>
+                </div>
+            `;
+
+            // ISSQN
+            resultGrid.innerHTML += `
+                <div class="result-card">
+                    <h4>ISSQN</h4>
+                    <div class="value">${formatarMoeda(issqnFinal)}</div>
+                    <div class="percentage">${(aliquotaISSQN * 100).toFixed(1)}% do valor bruto</div>
+                </div>
+            `;
+
+            // INSS
+            if (temINSS) {
+                resultGrid.innerHTML += `
+                    <div class="result-card">
+                        <h4>INSS</h4>
+                        <div class="value">${formatarMoeda(inssFinal)}</div>
+                        <div class="percentage">${(aliquotaINSS * 100).toFixed(1)}% do valor bruto</div>
+                    </div>
+                `;
+            }
+
+            // IR
+            if (temIR) {
+                const aliquota1 = parseFloat(document.getElementById('aliquota1').value) || 7.5;
+                const aliquota2 = parseFloat(document.getElementById('aliquota2').value) || 15;
+                const aliquota3 = parseFloat(document.getElementById('aliquota3').value) || 22.5;
+                const aliquota4 = parseFloat(document.getElementById('aliquota4').value) || 27.5;
+                
+                let percentualIRTexto = 'Isento';
+                if (irFinal > 0) {
+                    if (valorBruto <= 2826.65) {
+                        percentualIRTexto = `${aliquota1.toFixed(1)}% do valor bruto`;
+                    } else if (valorBruto <= 3751.05) {
+                        percentualIRTexto = `${aliquota2.toFixed(1)}% do valor bruto`;
+                    } else if (valorBruto <= 4664.68) {
+                        percentualIRTexto = `${aliquota3.toFixed(1)}% do valor bruto`;
+                    } else {
+                        percentualIRTexto = `${aliquota4.toFixed(1)}% do valor bruto`;
+                    }
+                }
+
+                resultGrid.innerHTML += `
+                    <div class="result-card">
+                        <h4>IR</h4>
+                        <div class="value">${formatarMoeda(irFinal)}</div>
+                        <div class="percentage">${percentualIRTexto}</div>
+                    </div>
+                `;
+            }
+
+            // CSLL
+            if (temCSLL) {
+                resultGrid.innerHTML += `
+                    <div class="result-card">
+                        <h4>CSLL</h4>
+                        <div class="value">${formatarMoeda(csllFinal)}</div>
+                        <div class="percentage">${(aliquotaCSLL * 100).toFixed(1)}% do valor bruto</div>
+                    </div>
+                `;
+            }
+
+            // PIS
+            if (temPIS) {
+                resultGrid.innerHTML += `
+                    <div class="result-card">
+                        <h4>PIS</h4>
+                        <div class="value">${formatarMoeda(pisFinal)}</div>
+                        <div class="percentage">${(aliquotaPIS * 100).toFixed(2)}% do valor bruto</div>
+                    </div>
+                `;
+            }
+
+            // COFINS
+            if (temCOFINS) {
+                resultGrid.innerHTML += `
+                    <div class="result-card">
+                        <h4>COFINS</h4>
+                        <div class="value">${formatarMoeda(cofinsFinal)}</div>
+                        <div class="percentage">${(aliquotaCOFINS * 100).toFixed(1)}% do valor bruto</div>
+                    </div>
+                `;
+            }
+
+            // Desconto Incondicional
+            if (temDescontoIncondicional) {
+                let percentualTexto = '';
+                if (incondicionalTipo === 'aliquota') {
+                    percentualTexto = `${(incondicionalAliquota * 100).toFixed(2)}% do valor bruto`;
+                } else {
+                    percentualTexto = `Valor fixo: ${formatarMoeda(incondicionalValor)}`;
+                }
+
+                resultGrid.innerHTML += `
+                    <div class="result-card">
+                        <h4>Desconto Incondicional</h4>
+                        <div class="value">${formatarMoeda(descontoIncondicionalFinal)}</div>
+                        <div class="percentage">${percentualTexto}</div>
+                    </div>
+                `;
+            }
+
+            // Desconto Condicional
+            if (temDescontoCondicional) {
+                let percentualTexto = '';
+                if (condicionalTipo === 'aliquota') {
+                    percentualTexto = `${(condicionalAliquota * 100).toFixed(2)}% do valor bruto (informativo)`;
+                } else {
+                    percentualTexto = `Valor fixo: ${formatarMoeda(condicionalValor)} (informativo)`;
+                }
+
+                resultGrid.innerHTML += `
+                    <div class="result-card">
+                        <h4>Desconto Condicional</h4>
+                        <div class="value">${formatarMoeda(descontoCondicionalFinal)}</div>
+                        <div class="percentage">${percentualTexto}</div>
+                    </div>
+                `;
+            }
+
+            // Outro Desconto
+            if (temOutroDesconto) {
+                let percentualTexto = '';
+                if (outroTipo === 'aliquota') {
+                    percentualTexto = `${(outroAliquota * 100).toFixed(2)}% do valor bruto`;
+                } else {
+                    percentualTexto = `Valor fixo: ${formatarMoeda(outroValor)}`;
+                }
+
+                resultGrid.innerHTML += `
+                    <div class="result-card">
+                        <h4>Outro Desconto</h4>
+                        <div class="value">${formatarMoeda(outroDescontoFinal)}</div>
+                        <div class="percentage">${percentualTexto}</div>
+                    </div>
+                `;
+            }
+
+            // Total de Impostos
+            resultGrid.innerHTML += `
+                <div class="result-card">
+                    <h4>Total de Impostos</h4>
+                    <div class="value">${formatarMoeda(totalImpostos)}</div>
+                    <div class="percentage">${((totalImpostos / valorBruto) * 100).toFixed(1)}% do valor bruto</div>
+                </div>
+            `;
+
+            // Valor Líquido
+            resultGrid.innerHTML += `
+                <div class="result-card">
+                    <h4>Valor Líquido</h4>
+                    <div class="value">${formatarMoeda(valorLiquido)}</div>
+                </div>
+            `;
+
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('noResults').style.display = 'none';
+        }
+
+        // Inicializar eventos quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+        });
+    </script>
+</body>
+</html>
