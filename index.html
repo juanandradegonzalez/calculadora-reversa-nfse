@@ -1048,16 +1048,22 @@
                 const aliquota3 = parseFloat(document.getElementById('aliquota3').value) || 22.5;
                 const aliquota4 = parseFloat(document.getElementById('aliquota4').value) || 27.5;
                 
-                let percentualIRTexto = 'Isento';
+                let faixaAliquota = 'Isento';
+                let aliquotaEfetiva = 0;
+                
                 if (irFinal > 0) {
+                    // Calcula a alíquota efetiva (percentual real aplicado sobre o valor bruto)
+                    aliquotaEfetiva = (irFinal / valorBruto) * 100;
+                    
+                    // Determina a faixa da alíquota
                     if (valorBruto <= 2826.65) {
-                        percentualIRTexto = `${aliquota1.toFixed(1)}% do valor bruto`;
+                        faixaAliquota = `${aliquota1.toFixed(1)}%`;
                     } else if (valorBruto <= 3751.05) {
-                        percentualIRTexto = `${aliquota2.toFixed(1)}% do valor bruto`;
+                        faixaAliquota = `${aliquota2.toFixed(1)}%`;
                     } else if (valorBruto <= 4664.68) {
-                        percentualIRTexto = `${aliquota3.toFixed(1)}% do valor bruto`;
+                        faixaAliquota = `${aliquota3.toFixed(1)}%`;
                     } else {
-                        percentualIRTexto = `${aliquota4.toFixed(1)}% do valor bruto`;
+                        faixaAliquota = `${aliquota4.toFixed(1)}%`;
                     }
                 }
 
@@ -1065,7 +1071,8 @@
                     <div class="result-card">
                         <h4>IR</h4>
                         <div class="value">${formatarMoeda(irFinal)}</div>
-                        <div class="percentage">${percentualIRTexto}</div>
+                        <div class="percentage">Faixa da alíquota: ${faixaAliquota}</div>
+                        ${irFinal > 0 ? `<div class="percentage">Alíquota efetiva: ${aliquotaEfetiva.toFixed(2)}% do valor bruto</div>` : ''}
                     </div>
                 `;
             }
